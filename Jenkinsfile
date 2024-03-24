@@ -18,7 +18,7 @@ pipeline {
 
   environment {
     DOCKER_CREDENTIALS = credentials("dockerhub")
-    IMAGE_NAME = "dnez" + "/" + "jobber-order"
+    IMAGE_NAME = "dnezdev" + "/" + "jobber-order"
     IMAGE_TAG = "stable-${BUILD_NUMBER}"
   }
 
@@ -34,13 +34,13 @@ pipeline {
         sh "[ -d pipeline ] || mkdir pipeline"
         dir("pipeline") {
           // Add your jenkins automation url to url field
-          git branch: 'main', credentialsId: 'github', url: ''
+          git branch: 'main', credentialsId: 'github', url: 'https://github.com/dnezdev/10-jenkins-automation'
           script {
             groovyMethods = load("functions.groovy")
           }
         }
         // Add your order github url to url field
-        git branch: 'main', credentialsId: 'github', url: ''
+        git branch: 'main', credentialsId: 'github', url: 'https://github.com/dnezdev/7-order-service'
         sh 'npm install'
       }
     }
