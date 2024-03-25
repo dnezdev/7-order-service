@@ -63,24 +63,56 @@ pipeline {
       }
     }
 
+     // stage("Build and Push") {
+    //   steps {
+    //     sh "docker login -u $DOCKERHUB_CREDENTIAL_USR --password $DOCKERHUB_CREDENTIALS_PSW"
+    //     sh "docker build -t $IMAGE_NAME ."
+    //     sh "docker tag $IMAGE_NAME $IMAGE_NAME:$IMAGE_TAG"
+    //     sh "docker tag $IMAGE_NAME $IMAGE_NAME:stable"
+    //     sh "docker push $IMAGE_NAME:$IMAGE_TAG"
+    //     sh "docker push $IMAGE_NAME:stable"
+    //   }
+    // }
+
     stage("Build and Push") {
-      steps {
-        sh 'docker login -u $DOCKERHUB_CREDENTIAL_USR --password $DOCKERHUB_CREDENTIALS_PSW'
-        sh "docker build -t $IMAGE_NAME ."
-        sh "docker tag $IMAGE_NAME $IMAGE_NAME:$IMAGE_TAG"
-        sh "docker tag $IMAGE_NAME $IMAGE_NAME:stable"
-        sh "docker push $IMAGE_NAME:$IMAGE_TAG"
-        sh "docker push $IMAGE_NAME:stable"
-      }
-    }
+    steps {
+        script {
+            try {
+                // Log in to Docker Hub
+                sh "docker login -u $DOCKERHUB_CREDENTIAL_USR --password $DOCKERHUB_CREDENTIALS_PSW"
 
-    stage("Clean Artifacts") {
-      steps {
-        sh "docker rmi $IMAGE_NAME:$IMAGE_TAG"
-        sh "docker rmi $IMAGE_NAME:stable"
-      }
-    }
+                // Build the Docker image
+                sh "docker build -t $IMAGE_NAME ."
 
+                // Tag the Docker image
+                sh "docker tag $IMAGE_NAME $IMAGE_NAME:$IMAGE_TAG"
+                sh "docker tag $IMAGE_NAME $IMAGE_NAME:stable"
+
+                // Push the Docker image to Docker Hub
+                sh "docker push $IMAGE_NAME:$IMAGE_TAG"
+                sh "docker push $IMAGE_NAME:stable"
+
+                // Log success message
+                echo "Docker image build and push completed successfully."
+            } catch (Exception e) {
+                // Log error message if any step fails
+                echo "Error occurred during Docker image build and push: ${e.message}"
+                currentBuild.result = 'FAILURE' // Mark the build as failed
+            } finally {
+                // Always logout from Docker Hub to clear credentials
+                sh "docker logout"
+            }
+        }
+    }
+}
+//--------------------------------------------------------
+
+    // stage("Clean Artifacts") {
+    //   steps {
+    //     sh "docker rmi $IMAGE_NAME:$IMAGE_TAG"
+    //     sh "docker rmi $IMAGE_NAME:stable"
+    //   }
+    // }
     stage("Create New Pods") {
       steps {
         withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: '', contextName: '', credentialsId: '', namespace: '', serverUrl: '']]) {
