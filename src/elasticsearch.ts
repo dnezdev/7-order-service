@@ -24,6 +24,4 @@ const checkConnection = async (): Promise<void> => {
   }
 };
 
-export {
-  checkConnection
-};
+export { checkConnection };

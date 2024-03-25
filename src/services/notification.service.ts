@@ -9,12 +9,12 @@ const createNotification = async (data: IOrderNotifcation): Promise<IOrderNotifc
 };
 
 const getNotificationsById = async (userToId: string): Promise<IOrderNotifcation[]> => {
-  const notifications: IOrderNotifcation[] = await OrderNotificationModel.aggregate([{ $match: { userTo: userToId }}]);
+  const notifications: IOrderNotifcation[] = await OrderNotificationModel.aggregate([{ $match: { userTo: userToId } }]);
   return notifications;
 };
 
 const markNotificationAsRead = async (notificationId: string): Promise<IOrderNotifcation> => {
-  const notification: IOrderNotifcation = await OrderNotificationModel.findOneAndUpdate(
+  const notification: IOrderNotifcation = (await OrderNotificationModel.findOneAndUpdate(
     { _id: notificationId },
     {
       $set: {
@@ -22,7 +22,7 @@ const markNotificationAsRead = async (notificationId: string): Promise<IOrderNot
       }
     },
     { new: true }
-  ) as IOrderNotifcation;
+  )) as IOrderNotifcation;
   const order: IOrderDocument = await getOrderByOrderId(notification.orderId);
   socketIOOrderObject.emit('order notification', order, notification);
   return notification;
@@ -42,9 +42,4 @@ const sendNotification = async (data: IOrderDocument, userToId: string, message:
   socketIOOrderObject.emit('order notification', data, orderNotification);
 };
 
-export {
-  createNotification,
-  getNotificationsById,
-  markNotificationAsRead,
-  sendNotification
-};
+export { createNotification, getNotificationsById, markNotificationAsRead, sendNotification };

@@ -64,7 +64,7 @@ const routesMiddleware = (app: Application): void => {
 };
 
 const startQueues = async (): Promise<void> => {
-  orderChannel = await createConnection() as Channel;
+  orderChannel = (await createConnection()) as Channel;
   await consumerReviewFanoutMessages(orderChannel);
 };
 

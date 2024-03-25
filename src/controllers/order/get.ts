@@ -18,8 +18,4 @@ const buyerOrders = async (req: Request, res: Response): Promise<void> => {
   res.status(StatusCodes.OK).json({ message: 'Buyer orders', orders });
 };
 
-export {
-  orderId,
-  sellerOrders,
-  buyerOrders
-};
+export { orderId, sellerOrders, buyerOrders };

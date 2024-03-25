@@ -36,7 +36,7 @@ const intent = async (req: Request, res: Response): Promise<void> => {
       amount: Math.floor((req.body.price + serviceFee) * 100),
       currency: 'usd',
       customer: customerId,
-      automatic_payment_methods: { enabled: true },
+      automatic_payment_methods: { enabled: true }
     });
   }
   res.status(StatusCodes.CREATED).json({
