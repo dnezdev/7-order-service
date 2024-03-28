@@ -121,7 +121,7 @@ pipeline {
                                                   contextName: 'minikube',
                                                   credentialsId: 'jenkins-k8s-token',
                                                   namespace: '',
-                                                  serverUrl: 'https://172.30.236.77:8443']]){
+                                                  serverUrl: 'https://172.20.97.179:8443']]){
           script {
             def pods = groovyMethods.findPodsFromName("${namespace}", "${serviceName}")
             for (podName in pods) {
